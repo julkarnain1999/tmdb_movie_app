@@ -17,10 +17,5 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    ```
 
 
-***MOVIES APPLICATION WITH REACT NATIVE EXPO ***
-
-=> React native expo and in backend appwrite use .
-=>user can any movies find and check trending movies also in this project we use many UI components with my skills and basically in this project data stored on appwrite application .
-=>user profile and save list with ui also see on their tab .
-=>user profile is in built UI design user can also change his profile in profile code.
-etc.
+***MOVIES APPLICATION WITH REACT NATIVE EXPO *** 
+=>Firebase with authentication sign-in and sign-up and backend data with Appwrite movies real time coming from TMDB.
