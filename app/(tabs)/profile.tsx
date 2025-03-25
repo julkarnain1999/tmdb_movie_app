@@ -1,45 +1,92 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+  ImageBackground,
+} from "react-native";
+import { useState, useEffect } from "react";
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "expo-router";
 
-const Profile = () => {
-  const profileImage =
-    "https://media.licdn.com/dms/image/v2/D5603AQF8Cuf2bXlc1w/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1720038788229?e=1747267200&v=beta&t=TAEvI-lgDqEC8-Y5G2uagXB0tSV_xPMapQRa_QOrcqU"; 
+
+export default function ProfileScreen() {
+  const auth = getAuth();
+  const router = useRouter(); // Use router for navigation
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setLoading(false);
+
+      // If user is not logged in, redirect to Sign-In page
+      if (!user) {
+        router.replace("/sign-in"); // Ensure user is redirected to sign-in
+      }
+    });
+
+    return () => unsubscribe(); // Cleanup on unmount
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      router.replace("/sign-in"); // Redirect immediately after logout
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
+
+  if (loading) {
+    return (
+   
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color="blue" />
+      </View>
+    );
+  }
 
   return (
-    <SafeAreaView className="bg-['#030014'] flex-1 px-5">
-      {/* Profile Header */}
-      <View className="items-center mt-14">
+    <ImageBackground
+      source={require("../../assets/images/profile.png")}
+      className="flex-1 "
+      resizeMode="cover"
+      blurRadius={10}
+    >
+      {/* Header */}
+      <View className="flex-row items-center justify-center p-4">
+        <Text className="text-2xl font-bold text-gray-400">Hi🙋‍♂️ i'm julkarnain </Text>
+
+      </View>
+      <View className="flex-1 justify-center items-center  p-4">
+        {/* Profile Picture */}
         <Image
-          source={{ uri: profileImage }}
-          className="w-24 h-24 rounded-full border-2 border-gray-500"
-          resizeMode="cover"
+          source={{
+            uri:
+              user?.photoURL ||
+              "https://media.licdn.com/dms/image/v2/D5603AQF8Cuf2bXlc1w/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1720038788229?e=1747872000&v=beta&t=V3tpnglcttcxgbLKwDgnivsX_ZF6YcF6xHz5tY63UqM",
+          }}
+          className="w-24 h-24 rounded-full mb-4"
         />
-        <Text className="text-white text-2xl font-bold mt-4">Md julkarnain</Text>
-        <Text className="text-gray-400 text-sm">mdjulkarnain043@gmail.com</Text>
-      </View>
 
-      {/* Membership Details */}
-      <View className="mt-8 bg-[#1a1a1a] p-5 rounded-lg">
-        <Text className="text-gray-400 text-sm">Membership</Text>
-        <Text className="text-white text-lg font-medium">Premium Plan</Text>
-      </View>
+        {/* User Info */}
+        <Text className="text-2xl text-white font-bold">
+          {user?.displayName || "User"}
+        </Text>
+        <Text className="text-lg text-gray-600 mb-4">{user?.email}</Text>
 
-      {/* Profile Options */}
-      <View className="mt-5 space-y-3">
-        <TouchableOpacity className="bg-[#333] py-3 rounded-lg">
-          <Text className="text-white text-center text-lg font-semibold">
-            Manage Profiles
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity className="bg-[#e50914] py-3 rounded-lg">
-          <Text className="text-white text-center text-lg font-semibold">
-            Logout
-          </Text>
+        {/* Logout Button */}
+        <TouchableOpacity
+          className="bg-red-500 p-3 rounded-lg mt-4"
+          onPress={handleLogout}
+        >
+          <Text className="text-white text-lg font-semibold">SignOut</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </ImageBackground>
   );
-};
+}
 
-export default Profile;

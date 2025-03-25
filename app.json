@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "movies_application",
-    "slug": "movies_application",
+    "name": "tmdb_movies_app",
+    "slug": "tmdb_movies_app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
